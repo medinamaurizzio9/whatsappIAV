@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'Promociones')
+@section('content')
+<div class="d-flex justify-content-end mb-3"><a href="{{ route('promotions.create') }}" class="btn btn-dark">Nueva promocion</a></div>
+<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0 align-middle"><thead><tr><th>Nombre</th><th>Inicio</th><th>Fin</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody>@foreach($promotions as $promotion)<tr><td>{{ $promotion->name }}</td><td>{{ optional($promotion->starts_at)->format('d/m/Y') ?? '-' }}</td><td>{{ optional($promotion->ends_at)->format('d/m/Y') ?? '-' }}</td><td><span class="badge text-bg-{{ $promotion->is_active ? 'success' : 'secondary' }}">{{ $promotion->is_active ? 'Activo' : 'Inactivo' }}</span></td><td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ route('promotions.show', $promotion) }}">Ver</a> <a class="btn btn-sm btn-outline-dark" href="{{ route('promotions.edit', $promotion) }}">Editar</a> <form method="POST" action="{{ route('promotions.destroy', $promotion) }}" class="d-inline" onsubmit="return confirm('Eliminar promocion?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Eliminar</button></form></td></tr>@endforeach</tbody></table></div></div><div class="mt-3">{{ $promotions->links() }}</div>
+@endsection

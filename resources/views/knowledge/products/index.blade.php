@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'Productos')
+@section('content')
+<div class="d-flex justify-content-end mb-3"><a href="{{ route('products.create') }}" class="btn btn-dark">Nuevo producto</a></div>
+<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0 align-middle"><thead><tr><th>Nombre</th><th>Precio</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody>@foreach($products as $product)<tr><td>{{ $product->name }}</td><td>{{ $product->price ? 'Bs. '.$product->price : '-' }}</td><td><span class="badge text-bg-{{ $product->is_active ? 'success' : 'secondary' }}">{{ $product->is_active ? 'Activo' : 'Inactivo' }}</span></td><td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ route('products.show', $product) }}">Ver</a> <a class="btn btn-sm btn-outline-dark" href="{{ route('products.edit', $product) }}">Editar</a> <form method="POST" action="{{ route('products.destroy', $product) }}" class="d-inline" onsubmit="return confirm('Eliminar producto?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Eliminar</button></form></td></tr>@endforeach</tbody></table></div></div><div class="mt-3">{{ $products->links() }}</div>
+@endsection

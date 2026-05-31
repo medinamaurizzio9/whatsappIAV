@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'Sorteos')
+@section('content')
+<div class="d-flex justify-content-end mb-3"><a href="{{ route('raffles.create') }}" class="btn btn-dark">Nuevo sorteo</a></div>
+<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0 align-middle"><thead><tr><th>Nombre</th><th>Fecha sorteo</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody>@foreach($raffles as $raffle)<tr><td>{{ $raffle->name }}</td><td>{{ optional($raffle->raffle_date)->format('d/m/Y') ?? '-' }}</td><td><span class="badge text-bg-{{ $raffle->is_active ? 'success' : 'secondary' }}">{{ $raffle->is_active ? 'Activo' : 'Inactivo' }}</span></td><td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ route('raffles.show', $raffle) }}">Ver</a> <a class="btn btn-sm btn-outline-dark" href="{{ route('raffles.edit', $raffle) }}">Editar</a> <form method="POST" action="{{ route('raffles.destroy', $raffle) }}" class="d-inline" onsubmit="return confirm('Eliminar sorteo?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Eliminar</button></form></td></tr>@endforeach</tbody></table></div></div><div class="mt-3">{{ $raffles->links() }}</div>
+@endsection
