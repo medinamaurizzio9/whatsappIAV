@@ -26,7 +26,13 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\RaffleController;
 use App\Http\Controllers\SimulatedConversationController;
+use App\Http\Controllers\WhatsAppInboxController;
+use App\Http\Controllers\WhatsAppSettingsController;
+use App\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify'])->name('whatsapp.webhook.verify');
+Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'receive'])->middleware('throttle:120,1')->name('whatsapp.webhook.receive');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
@@ -66,8 +72,15 @@ Route::middleware('auth')->group(function () {
         Route::resource('unanswered-questions', UnansweredQuestionController::class)->except(['create', 'store']);
         Route::get('/buscador-ia', [KnowledgeSearchController::class, 'index'])->name('knowledge-search.index');
         Route::post('/buscador-ia', [KnowledgeSearchController::class, 'search'])->name('knowledge-search.search');
+        Route::get('/whatsapp/settings', [WhatsAppSettingsController::class, 'edit'])->name('whatsapp.settings');
+        Route::put('/whatsapp/settings', [WhatsAppSettingsController::class, 'update'])->name('whatsapp.settings.update');
     });
 
+    Route::get('/whatsapp/inbox', [WhatsAppInboxController::class, 'index'])->name('whatsapp.inbox');
+    Route::get('/whatsapp/conversations/{conversation}', [WhatsAppInboxController::class, 'show'])->name('whatsapp.conversations.show');
+    Route::put('/whatsapp/conversations/{conversation}', [WhatsAppInboxController::class, 'update'])->name('whatsapp.conversations.update');
+    Route::post('/whatsapp/conversations/{conversation}/reply', [WhatsAppInboxController::class, 'reply'])->name('whatsapp.conversations.reply');
+    Route::post('/whatsapp/messages/{message}/approve', [WhatsAppInboxController::class, 'approve'])->name('whatsapp.messages.approve');
     Route::get('/ia/sandbox', [AiSandboxController::class, 'index'])->name('ai-sandbox.index');
     Route::post('/ia/sandbox', [AiSandboxController::class, 'run'])->name('ai-sandbox.run');
     Route::get('/comercial', CommercialDashboardController::class)->name('commercial.dashboard');

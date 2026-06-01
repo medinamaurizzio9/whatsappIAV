@@ -81,3 +81,29 @@ El buscador interno esta disponible en `/buscador-ia`. Por ahora no llama APIs e
 El modulo `/intentions` permite configurar etiquetas de intencion con accion por defecto, confianza minima, area de derivacion, palabras clave y prompt especifico opcional. FAQs, documentos, productos, promociones y sorteos pueden relacionarse con una o varias intenciones.
 
 `KnowledgeBaseService` detecta intenciones localmente con palabras clave, busca contenido asociado y devuelve accion recomendada, confianza simulada y area sugerida. Todavia no se conecta OpenAI, DeepSeek, Gemini ni WhatsApp real.
+
+## Fase 4: WhatsApp Cloud API oficial
+
+La configuracion esta disponible en `/whatsapp/settings`. Guarda el `access_token` cifrado, muestra solo los ultimos 4 caracteres y permite definir el modo de atencion: manual, supervisado o automatico.
+
+Para prueba local con ngrok:
+
+```bash
+php artisan serve
+ngrok http 8000
+```
+
+Configura en Meta la URL:
+
+```text
+https://TU-NGROK/webhook/whatsapp
+```
+
+Comandos utiles:
+
+```bash
+php artisan whatsapp:diagnose
+php artisan whatsapp:test-send 59170000000 "Mensaje de prueba"
+```
+
+El webhook recibe texto, imagen, audio, video, documento y ubicacion. No usa QR ni WhatsApp Web.

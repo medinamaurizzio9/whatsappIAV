@@ -15,7 +15,7 @@
             <button class="btn btn-outline-dark mt-3" name="compare" value="1">Comparar proveedores</button>
         </form>
     </div></div></div>
-    <div class="col-lg-7">
+    <div class="col-lg-7 ai-surface">
         @if($result)
             @include('ai.sandbox._result', ['title' => 'Resultado', 'item' => $result])
         @endif

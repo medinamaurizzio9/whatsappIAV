@@ -15,6 +15,7 @@ use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\Raffle;
 use App\Models\User;
+use App\Models\WhatsAppSetting;
 use App\Services\Commercial\CommercialIntentService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
@@ -281,6 +282,19 @@ class DatabaseSeeder extends Seeder
                 'is_active' => false,
                 'is_default' => false,
                 'notes' => 'Configura la API key para activar Gemini.',
+            ]
+        );
+
+        WhatsAppSetting::updateOrCreate(
+            ['verify_token' => 'vianka_verify_token_demo'],
+            [
+                'business_account_id' => null,
+                'phone_number_id' => null,
+                'display_phone_number' => null,
+                'webhook_url' => url('/webhook/whatsapp'),
+                'api_version' => 'v21.0',
+                'attention_mode' => 'manual',
+                'is_active' => false,
             ]
         );
 

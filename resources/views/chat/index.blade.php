@@ -40,9 +40,9 @@
         @if($result)
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white">Respuesta simulada</div>
-                <div class="card-body">
+                <div class="card-body chat-surface">
                     <div class="mb-2"><strong>Opcion:</strong> {{ $result['option'] }}</div>
-                    <div class="mb-2"><strong>Mensaje cliente:</strong> {{ $result['client_message'] }}</div>
+                    <div class="chat-bubble chat-bubble-user ms-lg-5 mb-3">{{ $result['client_message'] }}</div>
                     <div class="mb-2">
                         <strong>Decision:</strong>
                         <span class="badge text-bg-{{ $result['response_type'] === 'derivacion' ? 'warning' : 'success' }}">{{ $result['response_type'] }}</span>
@@ -51,7 +51,7 @@
                     <div class="mb-2"><strong>Confianza simulada:</strong> {{ $result['confidence'] ?? '-' }}</div>
                     <div class="mb-2"><strong>Accion recomendada:</strong> {{ $result['recommended_action'] ?? '-' }}</div>
                     <div class="mb-2"><strong>Area:</strong> {{ $result['area'] ?? '-' }}</div>
-                    <div class="alert alert-light border mb-0">{{ $result['message'] }}</div>
+                    <div class="chat-bubble chat-bubble-system mb-0">{{ $result['message'] }}</div>
                 </div>
             </div>
         @endif
