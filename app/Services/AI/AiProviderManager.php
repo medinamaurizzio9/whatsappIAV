@@ -29,6 +29,7 @@ class AiProviderManager
         return match ($setting->provider) {
             'openai' => new OpenAiProviderService($setting),
             'deepseek' => new DeepSeekProviderService($setting),
+            'gemini' => new GeminiProviderService($setting),
             default => throw new RuntimeException('Proveedor IA no soportado.'),
         };
     }
@@ -38,6 +39,7 @@ class AiProviderManager
         return [
             'openai' => $this->defaultSetting('openai'),
             'deepseek' => $this->defaultSetting('deepseek'),
+            'gemini' => $this->defaultSetting('gemini'),
         ];
     }
 }

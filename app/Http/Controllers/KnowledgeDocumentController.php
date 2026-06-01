@@ -116,7 +116,7 @@ class KnowledgeDocumentController extends Controller
             'knowledge_category_id' => ['required', 'exists:knowledge_categories,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'file' => [$fileRequired ? 'required' : 'nullable', 'file', 'mimes:pdf,docx,txt', 'max:10240'],
+            'file' => [$fileRequired ? 'required' : 'nullable', 'file', 'mimes:pdf,docx,txt,png,jpg,jpeg', 'max:10240'],
             'is_active' => ['nullable', 'boolean'],
             'intentions' => ['nullable', 'array'],
             'intentions.*' => ['exists:intentions,id'],

@@ -15,6 +15,7 @@ use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\Raffle;
 use App\Models\User;
+use App\Services\Commercial\CommercialIntentService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 
@@ -71,7 +72,7 @@ class DatabaseSeeder extends Seeder
             InitialMenuOption::updateOrCreate(['sort_order' => $option['sort_order']], $option + ['is_active' => true]);
         }
 
-        Client::updateOrCreate(
+        $demoClient = Client::updateOrCreate(
             ['phone' => '+591 75555555'],
             ['name' => 'Cliente de prueba', 'city' => 'Santa Cruz', 'type' => 'prospecto', 'observations' => 'Cliente demo para probar el chat interno.']
         );
@@ -268,5 +269,21 @@ class DatabaseSeeder extends Seeder
                 'notes' => 'Configura la API key para activar DeepSeek.',
             ]
         );
+
+        AiProviderSetting::updateOrCreate(
+            ['provider' => 'gemini', 'name' => 'Gemini Flash'],
+            [
+                'model' => 'gemini-2.5-flash',
+                'endpoint' => null,
+                'temperature' => 0.30,
+                'max_tokens' => 800,
+                'timeout_seconds' => 30,
+                'is_active' => false,
+                'is_default' => false,
+                'notes' => 'Configura la API key para activar Gemini.',
+            ]
+        );
+
+        app(CommercialIntentService::class)->recalculateScore($demoClient);
     }
 }

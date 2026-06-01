@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-8">
         <label class="form-label">Archivo PDF, DOCX o TXT</label>
-        <input type="file" name="file" class="form-control" accept=".pdf,.docx,.txt" {{ $document->exists ? '' : 'required' }}>
+        <input type="file" name="file" class="form-control" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg" {{ $document->exists ? '' : 'required' }}>
         @if($document->file_path)
             <div class="small mt-2"><a href="{{ asset('storage/'.$document->file_path) }}" target="_blank">{{ $document->original_filename }}</a></div>
         @endif

@@ -1,7 +1,7 @@
 @csrf
 <div class="row g-3">
     <div class="col-md-6"><label class="form-label">Nombre</label><input name="name" class="form-control" value="{{ old('name', $provider->name) }}" required></div>
-    <div class="col-md-3"><label class="form-label">Proveedor</label><select name="provider" class="form-select" required><option value="openai" @selected(old('provider', $provider->provider) === 'openai')>OpenAI</option><option value="deepseek" @selected(old('provider', $provider->provider) === 'deepseek')>DeepSeek</option></select></div>
+    <div class="col-md-3"><label class="form-label">Proveedor</label><select name="provider" class="form-select" required><option value="openai" @selected(old('provider', $provider->provider) === 'openai')>OpenAI</option><option value="deepseek" @selected(old('provider', $provider->provider) === 'deepseek')>DeepSeek</option><option value="gemini" @selected(old('provider', $provider->provider) === 'gemini')>Gemini</option></select></div>
     <div class="col-md-3"><label class="form-label">Modelo</label><input name="model" class="form-control" value="{{ old('model', $provider->model) }}" required></div>
     <div class="col-md-6"><label class="form-label">API Key</label><input type="password" name="api_key" class="form-control" {{ $provider->exists ? '' : 'required' }}>@if($provider->exists)<div class="form-text">Actual: {{ $provider->maskedApiKey() }}. Completa este campo solo para cambiarla.</div>@endif</div>
     <div class="col-md-6"><label class="form-label">Endpoint opcional</label><input name="endpoint" class="form-control" value="{{ old('endpoint', $provider->endpoint) }}"></div>

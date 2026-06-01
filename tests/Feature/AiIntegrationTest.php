@@ -8,6 +8,7 @@ use App\Models\DerivationArea;
 use App\Models\Intention;
 use App\Services\AI\AiIntentClassifierService;
 use App\Services\AI\AiProviderManager;
+use App\Services\AI\GeminiProviderService;
 use App\Services\KnowledgeBaseService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -77,5 +78,54 @@ class AiIntegrationTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('ai_interactions', ['id' => $interaction->id, 'success' => true]);
+    }
+
+    public function test_gemini_provider_can_be_created_and_selected(): void
+    {
+        AiProviderSetting::create([
+            'name' => 'Gemini Flash',
+            'provider' => 'gemini',
+            'model' => 'gemini-2.5-flash',
+            'is_active' => true,
+            'is_default' => true,
+        ]);
+
+        $this->assertInstanceOf(GeminiProviderService::class, app(AiProviderManager::class)->provider('gemini'));
+    }
+
+    public function test_gemini_fails_without_api_key(): void
+    {
+        $setting = AiProviderSetting::create([
+            'name' => 'Gemini Flash',
+            'provider' => 'gemini',
+            'model' => 'gemini-2.5-flash',
+            'is_active' => true,
+        ]);
+
+        $response = (new GeminiProviderService($setting))->generateResponse([
+            ['role' => 'user', 'content' => 'hola'],
+        ]);
+
+        $this->assertFalse($response['success']);
+        $this->assertSame('gemini', $response['provider']);
+        $this->assertSame('API key de Gemini no configurada.', $response['error']);
+    }
+
+    public function test_gemini_interaction_can_be_registered(): void
+    {
+        $interaction = AiInteraction::create([
+            'provider' => 'gemini',
+            'model' => 'gemini-2.5-flash',
+            'question' => 'Pregunta',
+            'response' => 'Respuesta',
+            'success' => false,
+            'error_message' => 'API key vacia',
+        ]);
+
+        $this->assertDatabaseHas('ai_interactions', [
+            'id' => $interaction->id,
+            'provider' => 'gemini',
+            'success' => false,
+        ]);
     }
 }

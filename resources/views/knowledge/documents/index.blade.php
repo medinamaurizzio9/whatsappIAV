@@ -1,7 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Documentos de conocimiento')
 @section('content')
-<div class="d-flex justify-content-end mb-3"><a href="{{ route('knowledge-documents.create') }}" class="btn btn-dark">Subir documento</a></div>
+<div class="d-flex justify-content-between mb-3">
+    <form method="POST" action="{{ route('knowledge.reindex') }}" class="d-flex gap-2">@csrf<select name="scope" class="form-select form-select-sm"><option value="all">Todo</option><option value="faqs">Solo FAQs</option><option value="documents">Solo documentos</option><option value="products">Solo productos</option></select><button class="btn btn-sm btn-outline-dark">Reindexar conocimiento</button></form>
+    <a href="{{ route('knowledge-documents.create') }}" class="btn btn-dark">Subir documento</a>
+</div>
 <div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0 align-middle">
 <thead><tr><th>Titulo</th><th>Categoria</th><th>Archivo</th><th>Fecha carga</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody>
 @foreach($documents as $document)

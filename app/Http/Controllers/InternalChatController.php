@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\InitialMenuOption;
 use App\Models\SimulatedConversation;
 use App\Services\AiRouterService;
+use App\Services\Commercial\CommercialIntentService;
 use App\Services\KnowledgeBaseService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class InternalChatController extends Controller
         ]);
     }
 
-    public function store(Request $request, AiRouterService $router, KnowledgeBaseService $knowledge): RedirectResponse
+    public function store(Request $request, AiRouterService $router, KnowledgeBaseService $knowledge, CommercialIntentService $commercial): RedirectResponse
     {
         $data = $request->validate([
             'client_id' => ['nullable', 'exists:clients,id'],
@@ -41,7 +42,7 @@ class InternalChatController extends Controller
         $responseType = $knowledgeResult['recommended_action'] === 'responder_ia' ? 'ia_simulada' : 'derivacion';
         $derivationAreaId = $knowledgeResult['derivation_area']?->id ?? $result['derivation_area_id'];
 
-        SimulatedConversation::create([
+        $conversation = SimulatedConversation::create([
             'client_id' => $data['client_id'] ?? null,
             'initial_menu_option_id' => $option->id,
             'channel' => 'interno',
@@ -51,6 +52,10 @@ class InternalChatController extends Controller
             'derivation_area_id' => $derivationAreaId,
             'responded_at' => now(),
         ]);
+
+        if (! empty($data['client_id'])) {
+            $commercial->registerEvent(Client::findOrFail($data['client_id']), $data['client_message'], $knowledgeResult['intention']);
+        }
 
         return redirect()->route('chat.index')->with('result', [
             'option' => $option->title,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Services\Commercial\CommercialIntentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -32,11 +33,12 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, CommercialIntentService $commercial): RedirectResponse
     {
         abort_unless($request->user()?->isAdmin(), 403);
 
-        Client::create($this->validated($request));
+        $client = Client::create($this->validated($request));
+        $commercial->recalculateScore($client);
 
         return redirect()->route('clients.index')->with('status', 'Cliente creado correctamente.');
     }

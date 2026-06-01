@@ -88,7 +88,7 @@ class AiProviderSettingController extends Controller
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'provider' => ['required', Rule::in(['openai', 'deepseek'])],
+            'provider' => ['required', Rule::in(['openai', 'deepseek', 'gemini'])],
             'model' => ['required', 'string', 'max:255'],
             'api_key' => [$creating ? 'required' : 'nullable', 'string'],
             'endpoint' => ['nullable', 'url', 'max:255'],

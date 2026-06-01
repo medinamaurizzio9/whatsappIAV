@@ -25,6 +25,8 @@
                     <a class="rounded px-3 py-2 {{ request()->routeIs('clients.*') ? 'active' : '' }}" href="{{ route('clients.index') }}">Clientes</a>
                     <a class="rounded px-3 py-2 {{ request()->routeIs('chat.*') ? 'active' : '' }}" href="{{ route('chat.index') }}">Chat interno</a>
                     <a class="rounded px-3 py-2 {{ request()->routeIs('ai-sandbox.*') ? 'active' : '' }}" href="{{ route('ai-sandbox.index') }}">Sandbox IA</a>
+                    <a class="rounded px-3 py-2 {{ request()->routeIs('commercial.*') ? 'active' : '' }}" href="{{ route('commercial.dashboard') }}">Comercial</a>
+                    <a class="rounded px-3 py-2 {{ request()->routeIs('leads.*') ? 'active' : '' }}" href="{{ route('leads.index') }}">Leads</a>
                     @if(auth()->user()->isAdmin())
                         <hr class="border-secondary">
                         <a class="rounded px-3 py-2 {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.edit') }}">Configuracion</a>
@@ -44,6 +46,9 @@
                         <a class="rounded px-3 py-2 {{ request()->routeIs('ai-providers.*') ? 'active' : '' }}" href="{{ route('ai-providers.index') }}">Proveedores IA</a>
                         <a class="rounded px-3 py-2 {{ request()->routeIs('ai-prompts.*') ? 'active' : '' }}" href="{{ route('ai-prompts.index') }}">Prompts IA</a>
                         <a class="rounded px-3 py-2 {{ request()->routeIs('ai-interactions.*') ? 'active' : '' }}" href="{{ route('ai-interactions.index') }}">Historial IA</a>
+                        <a class="rounded px-3 py-2 {{ request()->routeIs('knowledge-feedback.*') ? 'active' : '' }}" href="{{ route('knowledge-feedback.index') }}">Feedback</a>
+                        <a class="rounded px-3 py-2 {{ request()->routeIs('unanswered-questions.*') ? 'active' : '' }}" href="{{ route('unanswered-questions.index') }}">Preguntas pendientes</a>
+                        <a class="rounded px-3 py-2 {{ request()->routeIs('lead-reports.*') ? 'active' : '' }}" href="{{ route('lead-reports.index') }}">Reportes leads</a>
                     @endif
                 </nav>
             </aside>

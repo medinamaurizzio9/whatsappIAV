@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\AiInteraction;
 use App\Models\AiProviderSetting;
+use App\Models\Client;
 use App\Services\AI\AiKnowledgeResponderService;
+use App\Services\Commercial\CommercialIntentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -15,6 +17,7 @@ class AiSandboxController extends Controller
     {
         return view('ai.sandbox.index', [
             'providers' => AiProviderSetting::where('is_active', true)->orderBy('provider')->get(),
+            'clients' => Client::orderBy('name')->get(),
             'result' => session('result'),
             'comparison' => session('comparison'),
         ]);
@@ -24,15 +27,16 @@ class AiSandboxController extends Controller
     {
         $data = $request->validate([
             'question' => ['required', 'string', 'max:2000'],
-            'provider' => ['required', 'in:automatico,openai,deepseek'],
+            'provider' => ['required', 'in:automatico,openai,deepseek,gemini'],
             'use_knowledge' => ['nullable', 'boolean'],
             'use_intent' => ['nullable', 'boolean'],
             'compare' => ['nullable', 'boolean'],
+            'client_id' => ['nullable', 'exists:clients,id'],
         ]);
 
         if ($request->boolean('compare')) {
             $comparison = [];
-            foreach (['openai', 'deepseek'] as $provider) {
+            foreach (['openai', 'deepseek', 'gemini'] as $provider) {
                 $comparison[$provider] = $this->respondAndStore($request, $responder, $data['question'], $provider, $data);
             }
 
@@ -72,6 +76,10 @@ class AiSandboxController extends Controller
             'error_message' => $result['error'] ?? null,
             'raw_response_json' => $result['raw'] ?? [],
         ]);
+
+        if (! empty($data['client_id'])) {
+            app(CommercialIntentService::class)->registerEvent(Client::findOrFail($data['client_id']), $question, $result['intention'] ?? null);
+        }
 
         return $result;
     }

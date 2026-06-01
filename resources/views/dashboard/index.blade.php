@@ -18,6 +18,10 @@
         'Consultas IA reales' => $totalAiInteractions,
         'Derivaciones por IA' => $aiDerivations,
         'Errores IA' => $aiErrors,
+        'Preguntas respondidas' => $answeredQuestions,
+        'Preguntas sin respuesta' => $unansweredQuestions,
+        'Embeddings creados' => $embeddingsCount,
+        'Documentos indexados' => $indexedDocuments,
     ] as $label => $value)
         <div class="col-md-6 col-xl-3">
             <div class="card stat-card shadow-sm">
@@ -61,6 +65,7 @@
                 <div class="text-muted small">Proveedor IA mas usado</div>
                 <div class="h5 mb-0">{{ $topAiProvider?->provider ?? 'Sin uso' }}</div>
                 <div class="text-muted">Costo estimado total: {{ number_format((float) $totalAiCost, 6) }}</div>
+                <div class="text-muted">Precision estimada: {{ $estimatedPrecision }}%</div>
             </div>
         </div>
     </div>

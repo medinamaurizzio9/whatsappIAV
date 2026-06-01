@@ -5,7 +5,9 @@ namespace App\Services\AI;
 use App\Models\AiPromptTemplate;
 use App\Models\DerivationArea;
 use App\Models\Intention;
+use App\Models\UnansweredQuestion;
 use App\Services\KnowledgeBaseService;
+use App\Services\RAG\SemanticSearchService;
 use Throwable;
 
 class AiKnowledgeResponderService
@@ -14,6 +16,7 @@ class AiKnowledgeResponderService
         private readonly AiProviderManager $manager,
         private readonly AiIntentClassifierService $classifier,
         private readonly KnowledgeBaseService $knowledge,
+        private readonly SemanticSearchService $semantic,
     ) {
     }
 
@@ -28,6 +31,7 @@ class AiKnowledgeResponderService
         $useIntent = (bool) ($options['use_intent'] ?? true);
 
         $classification = $this->classifier->classify($question, $provider, $useIntent);
+        $semanticContext = $useKnowledge ? $this->semantic->buscarContexto($question) : [];
         $knowledge = $useKnowledge ? $this->knowledge->generarRespuestaLocal($question) : [
             'sources' => [],
             'faqs' => collect(),
@@ -36,6 +40,15 @@ class AiKnowledgeResponderService
             'promotions' => collect(),
             'raffles' => collect(),
         ];
+        $knowledge['semantic_context'] = $semanticContext;
+        $knowledge['sources'] = array_merge($knowledge['sources'] ?? [], array_map(fn (array $chunk) => [
+            'type' => 'chunk',
+            'id' => $chunk['source_id'],
+            'title' => $chunk['source_type'].' #'.$chunk['source_id'].' chunk '.$chunk['chunk_index'],
+            'score' => $chunk['score'],
+            'chunk_index' => $chunk['chunk_index'],
+            'intention' => $chunk['intention'],
+        ], $semanticContext));
 
         $intention = $classification['intention'];
         $action = $classification['recommended_action'];
@@ -48,6 +61,10 @@ class AiKnowledgeResponderService
         if (empty($knowledge['sources']) && $useKnowledge) {
             $classification['recommended_action'] = Intention::ACTION_DERIVE;
             $classification['derivation_area'] = $area ?: DerivationArea::where('name', 'Ventas')->first();
+            UnansweredQuestion::firstOrCreate(
+                ['question' => $question],
+                ['intention_id' => $classification['intention']?->id, 'reason' => 'Sin fuentes suficientes para RAG.', 'status' => 'pendiente']
+            );
 
             return $this->decisionOnly($question, $classification, $knowledge, (int) ((microtime(true) - $started) * 1000), 'No encontre fuentes suficientes en la base de conocimiento. Derivo la consulta al area correspondiente.');
         }
@@ -97,6 +114,7 @@ class AiKnowledgeResponderService
             'Accion recomendada: '.$classification['recommended_action']."\n".
             'Area: '.($classification['derivation_area']?->name ?? '-')."\n\n".
             "Fuentes disponibles:\n".json_encode($knowledge['sources'], JSON_UNESCAPED_UNICODE)."\n\n".
+            "Chunks semanticos:\n".json_encode($knowledge['semantic_context'] ?? [], JSON_UNESCAPED_UNICODE)."\n\n".
             "Contexto local:\n".$knowledge['answer'];
     }
 
@@ -123,6 +141,7 @@ class AiKnowledgeResponderService
             'recommended_action' => $classification['recommended_action'],
             'derivation_area' => $area,
             'sources' => $knowledge['sources'],
+            'semantic_context' => $knowledge['semantic_context'] ?? [],
             'raw' => [],
         ];
     }
@@ -136,6 +155,7 @@ class AiKnowledgeResponderService
             'recommended_action' => $classification['recommended_action'],
             'derivation_area' => $classification['derivation_area'],
             'sources' => $knowledge['sources'],
+            'semantic_context' => $knowledge['semantic_context'] ?? [],
             'success' => $success,
         ];
     }

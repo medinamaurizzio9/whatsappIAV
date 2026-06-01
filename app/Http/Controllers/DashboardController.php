@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\AiInteraction;
+use App\Models\KnowledgeEmbedding;
+use App\Models\KnowledgeFeedback;
+use App\Models\UnansweredQuestion;
 use App\Models\KnowledgeDocument;
 use App\Models\KnowledgeFaq;
 use App\Models\KnowledgeQuery;
@@ -41,6 +44,11 @@ class DashboardController extends Controller
             'topAiProvider' => AiInteraction::select('provider', DB::raw('count(*) as total'))->whereNotNull('provider')->groupBy('provider')->orderByDesc('total')->first(),
             'aiDerivations' => AiInteraction::whereIn('action', ['derivar', 'responder_y_derivar'])->count(),
             'aiErrors' => AiInteraction::where('success', false)->count(),
+            'answeredQuestions' => AiInteraction::where('success', true)->count(),
+            'unansweredQuestions' => UnansweredQuestion::where('status', 'pendiente')->count(),
+            'embeddingsCount' => KnowledgeEmbedding::count(),
+            'indexedDocuments' => KnowledgeEmbedding::where('source_type', 'document')->distinct('source_id')->count('source_id'),
+            'estimatedPrecision' => $this->estimatedPrecision(),
             'latestConversations' => SimulatedConversation::with(['client', 'derivationArea', 'initialMenuOption'])
                 ->latest('responded_at')
                 ->limit(8)
@@ -64,5 +72,16 @@ class DashboardController extends Controller
         $intention?->setAttribute('queries_count', $row->queries_count);
 
         return $intention;
+    }
+
+    private function estimatedPrecision(): float
+    {
+        $total = KnowledgeFeedback::count();
+
+        if ($total === 0) {
+            return 0;
+        }
+
+        return round((KnowledgeFeedback::where('rating', '>=', 4)->count() / $total) * 100, 2);
     }
 }
