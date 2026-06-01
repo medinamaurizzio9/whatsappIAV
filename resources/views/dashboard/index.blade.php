@@ -15,6 +15,9 @@
         'Consultas realizadas' => $totalKnowledgeQueries,
         'Consultas derivadas' => $derivedKnowledgeQueries,
         'Consultas IA simulada' => $aiKnowledgeQueries,
+        'Consultas IA reales' => $totalAiInteractions,
+        'Derivaciones por IA' => $aiDerivations,
+        'Errores IA' => $aiErrors,
     ] as $label => $value)
         <div class="col-md-6 col-xl-3">
             <div class="card stat-card shadow-sm">
@@ -49,6 +52,15 @@
                 @empty
                     <div class="text-muted">Aun no hay consultas clasificadas.</div>
                 @endforelse
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted small">Proveedor IA mas usado</div>
+                <div class="h5 mb-0">{{ $topAiProvider?->provider ?? 'Sin uso' }}</div>
+                <div class="text-muted">Costo estimado total: {{ number_format((float) $totalAiCost, 6) }}</div>
             </div>
         </div>
     </div>

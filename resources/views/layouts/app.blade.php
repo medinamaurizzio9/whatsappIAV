@@ -24,6 +24,7 @@
                     <a class="rounded px-3 py-2 {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
                     <a class="rounded px-3 py-2 {{ request()->routeIs('clients.*') ? 'active' : '' }}" href="{{ route('clients.index') }}">Clientes</a>
                     <a class="rounded px-3 py-2 {{ request()->routeIs('chat.*') ? 'active' : '' }}" href="{{ route('chat.index') }}">Chat interno</a>
+                    <a class="rounded px-3 py-2 {{ request()->routeIs('ai-sandbox.*') ? 'active' : '' }}" href="{{ route('ai-sandbox.index') }}">Sandbox IA</a>
                     @if(auth()->user()->isAdmin())
                         <hr class="border-secondary">
                         <a class="rounded px-3 py-2 {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.edit') }}">Configuracion</a>
@@ -39,6 +40,10 @@
                         <a class="rounded px-3 py-2 {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">Productos</a>
                         <a class="rounded px-3 py-2 {{ request()->routeIs('promotions.*') ? 'active' : '' }}" href="{{ route('promotions.index') }}">Promociones</a>
                         <a class="rounded px-3 py-2 {{ request()->routeIs('raffles.*') ? 'active' : '' }}" href="{{ route('raffles.index') }}">Sorteos</a>
+                        <hr class="border-secondary">
+                        <a class="rounded px-3 py-2 {{ request()->routeIs('ai-providers.*') ? 'active' : '' }}" href="{{ route('ai-providers.index') }}">Proveedores IA</a>
+                        <a class="rounded px-3 py-2 {{ request()->routeIs('ai-prompts.*') ? 'active' : '' }}" href="{{ route('ai-prompts.index') }}">Prompts IA</a>
+                        <a class="rounded px-3 py-2 {{ request()->routeIs('ai-interactions.*') ? 'active' : '' }}" href="{{ route('ai-interactions.index') }}">Historial IA</a>
                     @endif
                 </nav>
             </aside>

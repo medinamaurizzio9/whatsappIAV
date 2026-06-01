@@ -1,0 +1,3 @@
+@extends('layouts.app')
+@section('title', 'Detalle proveedor IA')
+@section('content')<div class="card border-0 shadow-sm"><div class="card-body"><h2 class="h5">{{ $provider->name }}</h2><dl class="row"><dt class="col-sm-3">Proveedor</dt><dd class="col-sm-9">{{ $provider->provider }}</dd><dt class="col-sm-3">Modelo</dt><dd class="col-sm-9">{{ $provider->model }}</dd><dt class="col-sm-3">API Key</dt><dd class="col-sm-9">{{ $provider->maskedApiKey() }}</dd><dt class="col-sm-3">Endpoint</dt><dd class="col-sm-9">{{ $provider->endpoint ?? '-' }}</dd><dt class="col-sm-3">Notas</dt><dd class="col-sm-9">{{ $provider->notes ?? '-' }}</dd></dl></div></div>@endsection

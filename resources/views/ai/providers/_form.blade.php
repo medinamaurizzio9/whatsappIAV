@@ -1,0 +1,14 @@
+@csrf
+<div class="row g-3">
+    <div class="col-md-6"><label class="form-label">Nombre</label><input name="name" class="form-control" value="{{ old('name', $provider->name) }}" required></div>
+    <div class="col-md-3"><label class="form-label">Proveedor</label><select name="provider" class="form-select" required><option value="openai" @selected(old('provider', $provider->provider) === 'openai')>OpenAI</option><option value="deepseek" @selected(old('provider', $provider->provider) === 'deepseek')>DeepSeek</option></select></div>
+    <div class="col-md-3"><label class="form-label">Modelo</label><input name="model" class="form-control" value="{{ old('model', $provider->model) }}" required></div>
+    <div class="col-md-6"><label class="form-label">API Key</label><input type="password" name="api_key" class="form-control" {{ $provider->exists ? '' : 'required' }}>@if($provider->exists)<div class="form-text">Actual: {{ $provider->maskedApiKey() }}. Completa este campo solo para cambiarla.</div>@endif</div>
+    <div class="col-md-6"><label class="form-label">Endpoint opcional</label><input name="endpoint" class="form-control" value="{{ old('endpoint', $provider->endpoint) }}"></div>
+    <div class="col-md-3"><label class="form-label">Temperatura</label><input type="number" step="0.01" min="0" max="2" name="temperature" class="form-control" value="{{ old('temperature', $provider->temperature) }}" required></div>
+    <div class="col-md-3"><label class="form-label">Max tokens</label><input type="number" min="1" name="max_tokens" class="form-control" value="{{ old('max_tokens', $provider->max_tokens) }}" required></div>
+    <div class="col-md-3"><label class="form-label">Timeout seg.</label><input type="number" min="5" max="120" name="timeout_seconds" class="form-control" value="{{ old('timeout_seconds', $provider->timeout_seconds ?? 30) }}" required></div>
+    <div class="col-md-3 d-flex align-items-end gap-3"><div class="form-check form-switch"><input type="hidden" name="is_active" value="0"><input class="form-check-input" type="checkbox" name="is_active" value="1" @checked(old('is_active', $provider->is_active))><label class="form-check-label">Activo</label></div><div class="form-check form-switch"><input type="hidden" name="is_default" value="0"><input class="form-check-input" type="checkbox" name="is_default" value="1" @checked(old('is_default', $provider->is_default))><label class="form-check-label">Default</label></div></div>
+    <div class="col-12"><label class="form-label">Notas</label><textarea name="notes" rows="3" class="form-control">{{ old('notes', $provider->notes) }}</textarea></div>
+</div>
+<button class="btn btn-dark mt-4">Guardar</button><a class="btn btn-link mt-4" href="{{ route('ai-providers.index') }}">Cancelar</a>

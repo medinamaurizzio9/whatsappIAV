@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Client;
+use App\Models\AiPromptTemplate;
+use App\Models\AiProviderSetting;
 use App\Models\DerivationArea;
 use App\Models\GeneralSetting;
 use App\Models\InitialMenuOption;
@@ -206,5 +208,65 @@ class DatabaseSeeder extends Seeder
             ->first()
             ?->intentions()
             ->syncWithoutDetaching([$seededIntentions['sorteos']->id]);
+
+        AiPromptTemplate::updateOrCreate(
+            ['type' => 'respuesta_cliente', 'name' => 'Respuesta cliente base'],
+            [
+                'content' => 'Eres un asesor virtual de VIANKA GOLD MINING. Responde de forma clara, amable y comercial. Usa únicamente la información proporcionada en la base de conocimiento. Si no tienes información suficiente, no inventes. Indica que derivarás la consulta al área correspondiente. No prometas rentabilidad, ganancias garantizadas ni beneficios no documentados.',
+                'is_active' => true,
+            ]
+        );
+
+        AiPromptTemplate::updateOrCreate(
+            ['type' => 'clasificacion_intencion', 'name' => 'Clasificacion intencion base'],
+            [
+                'content' => 'Clasifica el mensaje del cliente según las intenciones disponibles. Devuelve JSON válido con: intention_slug, confidence, action, derivation_area_slug, reason.',
+                'is_active' => true,
+            ]
+        );
+
+        AiPromptTemplate::updateOrCreate(
+            ['type' => 'derivacion', 'name' => 'Derivacion base'],
+            [
+                'content' => 'Cuando la consulta requiera atención humana, genera un mensaje breve indicando el área a la que será derivada.',
+                'is_active' => true,
+            ]
+        );
+
+        AiPromptTemplate::updateOrCreate(
+            ['type' => 'seguridad', 'name' => 'Seguridad comercial base'],
+            [
+                'content' => 'No inventes precios, premios, fechas, condiciones, garantías ni rentabilidad. Si falta información, deriva.',
+                'is_active' => true,
+            ]
+        );
+
+        AiProviderSetting::updateOrCreate(
+            ['provider' => 'openai', 'name' => 'OpenAI GPT'],
+            [
+                'model' => 'gpt-4o-mini',
+                'endpoint' => 'https://api.openai.com/v1/chat/completions',
+                'temperature' => 0.30,
+                'max_tokens' => 800,
+                'timeout_seconds' => 30,
+                'is_active' => false,
+                'is_default' => true,
+                'notes' => 'Configura la API key para activar OpenAI.',
+            ]
+        );
+
+        AiProviderSetting::updateOrCreate(
+            ['provider' => 'deepseek', 'name' => 'DeepSeek Chat'],
+            [
+                'model' => 'deepseek-chat',
+                'endpoint' => 'https://api.deepseek.com/chat/completions',
+                'temperature' => 0.30,
+                'max_tokens' => 800,
+                'timeout_seconds' => 30,
+                'is_active' => false,
+                'is_default' => false,
+                'notes' => 'Configura la API key para activar DeepSeek.',
+            ]
+        );
     }
 }

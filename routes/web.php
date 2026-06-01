@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AiInteractionController;
+use App\Http\Controllers\AiPromptTemplateController;
+use App\Http\Controllers\AiProviderSettingController;
+use App\Http\Controllers\AiSandboxController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DerivationAreaController;
@@ -47,7 +51,14 @@ Route::middleware('auth')->group(function () {
         Route::resource('promotions', PromotionController::class);
         Route::resource('raffles', RaffleController::class);
         Route::resource('intentions', IntentionController::class);
+        Route::resource('ai-providers', AiProviderSettingController::class)->parameters(['ai-providers' => 'aiProvider']);
+        Route::resource('ai-prompts', AiPromptTemplateController::class)->parameters(['ai-prompts' => 'aiPrompt']);
+        Route::get('/ia/historial', [AiInteractionController::class, 'index'])->name('ai-interactions.index');
+        Route::get('/ia/historial/{interaction}', [AiInteractionController::class, 'show'])->name('ai-interactions.show');
         Route::get('/buscador-ia', [KnowledgeSearchController::class, 'index'])->name('knowledge-search.index');
         Route::post('/buscador-ia', [KnowledgeSearchController::class, 'search'])->name('knowledge-search.search');
     });
+
+    Route::get('/ia/sandbox', [AiSandboxController::class, 'index'])->name('ai-sandbox.index');
+    Route::post('/ia/sandbox', [AiSandboxController::class, 'run'])->name('ai-sandbox.run');
 });
